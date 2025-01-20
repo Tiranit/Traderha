@@ -1,0 +1,33 @@
+name: Crypto Alert
+
+on:
+  push:  # اجرای آنی به‌محض اضافه یا تغییر در فایل workflow یا کد
+    branches:
+      - main  # نام شاخه‌ای که تغییرات در آن اعمال می‌شود (مطابق شاخه پیش‌فرض شما)
+  workflow_dispatch:  # امکان اجرای دستی
+
+jobs:
+  crypto-alert:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3  # دریافت کد از مخزن
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.9"  # نسخه پایتون مورد نیاز
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install ccxt pandas
+
+    - name: Run script
+      env:
+        SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}  # ایمیل فرستنده
+        RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}  # ایمیل گیرنده
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}  # رمز ایمیل
+      run: |
+        python main.py  # نام فایل پایتون خود را جایگزین کنید
